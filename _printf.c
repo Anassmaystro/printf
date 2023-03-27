@@ -1,66 +1,76 @@
+#include <stdio.h>
 #include "main.h"
 
-void print_buffer(char buffer[], int *buff_ind);
+#define BUFFER_SIZE 100
 
 /**
- * _printf - Printf function
- * @format: format.
- * Return: Printed chars.
+ * _printf - Custom printf function
+ * @format: char pointer array
+ * Return: will think about it
  */
-int _print(const char *format, ...)
+int _printf(const char *format, ...)
 {
-	int i, printed = 0, printed_chars = 0;
-	int flags, width, precision, size, buff_ind = 0;
 	va_list list;
-	char buffer[BUFF_SIZE];
+	char buffer[BUFFER_SIZE], *s;
+	int counter, buffer_counter, printed_counter;
 
 	if (format == NULL)
 		return (-1);
 
 	va_start(list, format);
 
-	for (i = 0; format && format[i] != '\0'; i++)
+	counter = 0;
+	buffer_counter = 0;
+	printed_counter = 0;
+	while (format && format[counter] != '\0')
 	{
-		if (format[i] != '%')
+		if (format[counter] == '%')
 		{
-			buffer[buff_ind++] = format[i];
-		if (buff_ind == BUFF_SIZE)
-				print_buffer(buffer, &buff_ind);
-			/* write(1, &format[i], 1);*/
-			printed_chars++;
+			counter++;
+			switch (format[counter])
+			{
+				case 'c':
+					{
+						buffer[buffer_counter++] = (char)va_arg(list, int);
+						printed_counter++;
+						break;
+					}
+				case 's':
+					{
+						s = va_arg(list, char *);
+						while (*s != '\0')
+						{
+							buffer[buffer_counter++] = *s;
+							s++;
+						}
+						printed_counter++;
+						break;
+					}
+				case '%':
+					{
+						buffer[buffer_counter++] = '%';
+						printed_counter++;
+						break;
+					}
+				case 'n':
+					{
+						buffer[buffer_counter++] = '\n';
+						printed_counter++;
+						break;
+					}
+			}
 		}
 		else
 		{
-			print_buffer(buffer, &buff_ind);
-			flags = get_flags(format, &i);
-			width = get_width(format, &i, list);
-			precision = get_precision(format, &i, list);
-			size = get_size(format, &i);
-			++i;
-			printed = handle_print(format, &i, list, buffer, flags, width, precision, size);
-			if (printed == -1)
-				return (-1);
-			printed_chars += printed;
+			buffer[buffer_counter++] = (char)format[counter];
+			printed_counter++;
 		}
+		counter++;
 	}
-
-	print_buffer(buffer, &buff_ind);
-
-	va_end(list);
-
-	return (printed_chars);
-}
-
-/**
- * print_buffer - Prints the contents of the buffer if it exist
- * @buffer: Array of chars
- * @buff_ind: Index at which to add next char, represents the length.
- */
-void print_buffer(char buffer[], int *buff_ind)
-{
-	if (*buff_ind > 0)
-		write(1, &buffer[0], *buff_ind);
-
-	*buff_ind = 0;
+	if (buffer_counter > 0)
+	{
+		write(1, &buffer[0], buffer_counter);
+	}
+	return (printed_counter);
 }
 
