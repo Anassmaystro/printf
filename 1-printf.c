@@ -46,12 +46,8 @@ int _printf(const char *format, ...)
 						printed_counter++;
 						break;
 					}
-				case 'n':
-					{
-						buffer[buffer_counter++] = '\n';
-						printed_counter++;
-						break;
-					}
+				default:
+					continue;
 			}
 		}
 		else
@@ -65,6 +61,7 @@ int _printf(const char *format, ...)
 	{
 		write(1, &buffer[0], buffer_counter);
 	}
+	buffer_counter = 0;
 	va_end(list);
 	return (printed_counter);
 }
