@@ -3,6 +3,11 @@
 
 #define BUFFER_SIZE 100
 
+void handleCharacter(int *buffer_counter, va_list list,
+		int *printed_counter, char *buffer);
+void handleString(int *buffer_counter, va_list list,
+			int *printed_counter, char *buffer);
+
 /**
  * _printf - Custom printf function
  * @format: char pointer array
@@ -11,7 +16,7 @@
 int _printf(const char *format, ...)
 {
 	va_list list;
-	char buffer[BUFFER_SIZE], *s;
+	char buffer[BUFFER_SIZE];
 	int counter, buffer_counter, printed_counter;
 
 	if (format == NULL)
@@ -30,22 +35,11 @@ int _printf(const char *format, ...)
 			switch (format[counter])
 			{
 				case 'c':
-					{
-						buffer[buffer_counter++] = (char)va_arg(list, int);
-						printed_counter++;
-						break;
-					}
+					handleCharacter(&buffer_counter, list, &printed_counter, buffer);
+					break;
 				case 's':
-					{
-						s = va_arg(list, char *);
-						while (*s != '\0')
-						{
-							buffer[buffer_counter++] = *s;
-							s++;
-						}
-						printed_counter++;
-						break;
-					}
+					handleString(&buffer_counter, list, &printed_counter, buffer);
+					break;
 				case '%':
 					{
 						buffer[buffer_counter++] = '%';
@@ -73,4 +67,40 @@ int _printf(const char *format, ...)
 	}
 	return (printed_counter);
 }
+/**
+ * handleCharacter - handles strings, a utility of printf
+ * @buffer_counter: buffer pointer
+ * @list: va_list
+ * @printed_counter: int pointer
+ * @buffer: char pointer
+ * Return: void
+ */
+void handleCharacter(int *buffer_counter, va_list list,
+			int *printed_counter, char *buffer)
+{
+	char c = (char)va_arg(list, int);
 
+	buffer[(*buffer_counter)++] = c;
+	(void)*printed_counter++;
+}
+
+/**
+ * handleString - handles strings, a utility of printf
+ * @buffer_counter: buffer pointer
+ * @list: va_list
+ * @printed_counter: int pointer
+ * @buffer: char pointer
+ * Return: void
+ */
+void handleString(int *buffer_counter, va_list list,
+			int *printed_counter, char *buffer)
+{
+	char *s = va_arg(list, char *);
+
+	while (s != NULL && *s != '\0')
+	{
+		buffer[(*buffer_counter)++] = *s;
+		s++;
+	}
+	(void)*printed_counter++;
+}
