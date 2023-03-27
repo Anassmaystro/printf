@@ -65,6 +65,7 @@ int _printf(const char *format, ...)
 	{
 		write(1, &buffer[0], buffer_counter);
 	}
+	va_end(list);
 	return (printed_counter);
 }
 /**
