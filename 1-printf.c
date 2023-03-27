@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include "main.h"
 
-#define BUFFER_SIZE 100
+#define BUFFER_SIZE 1000
 
 void handleCharacter(int *buffer_counter, va_list list,
 		int *printed_counter, char *buffer);
@@ -81,7 +81,7 @@ void handleCharacter(int *buffer_counter, va_list list,
 	char c = (char)va_arg(list, int);
 
 	buffer[(*buffer_counter)++] = c;
-	(void)*printed_counter++;
+	(*printed_counter)++;
 }
 
 /**
@@ -101,6 +101,6 @@ void handleString(int *buffer_counter, va_list list,
 	{
 		buffer[(*buffer_counter)++] = *s;
 		s++;
+		(*printed_counter)++;
 	}
-	(void)*printed_counter++;
 }
